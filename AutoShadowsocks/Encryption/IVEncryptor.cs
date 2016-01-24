@@ -58,7 +58,15 @@ namespace Shadowsocks.Encryption
                 _key = new byte[32];
                 byte[] iv = new byte[16];
                 bytesToKey(passbuf, _key);
-                CachedKeys[k] = _key;
+                try
+                {
+                    CachedKeys[k] = _key;
+                }
+                catch (Exception)
+                { }
+	
+                    
+                
             }
         }
 

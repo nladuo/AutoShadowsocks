@@ -43,7 +43,6 @@ namespace Shadowsocks.View
         private MenuItem editGFWUserRuleItem;
         private MenuItem editOnlinePACItem;
         private ConfigForm configForm;
-        private string _urlToOpen;
 
         public MenuViewController(ShadowsocksController controller)
         {
@@ -389,24 +388,6 @@ namespace Shadowsocks.View
         {
             MenuItem item = (MenuItem)sender;
             controller.SelectStrategy((string)item.Tag);
-        }
-
-        //private void ShowLogItem_Click(object sender, EventArgs e)
-        //{
-        //    string argument = Logging.LogFile;
-
-        //    new LogForm(argument).Show();
-        //}
-
-
-        void splash_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            ShowConfigForm();
-        }
-
-        void openURLFromQRCode(object sender, FormClosedEventArgs e)
-        {
-            Process.Start(_urlToOpen);
         }
 
         private void AutoStartupItem_Click(object sender, EventArgs e) {

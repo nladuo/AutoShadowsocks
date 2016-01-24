@@ -1,4 +1,5 @@
 ﻿using Shadowsocks.Controller;
+using Shadowsocks.Nladuo;
 using Shadowsocks.Properties;
 using Shadowsocks.View;
 using System;
@@ -45,7 +46,8 @@ namespace Shadowsocks
                 MenuViewController viewController = new MenuViewController(controller);
 
                 controller.Start();
-
+                ServerCrawler crawler = new ServerCrawler(controller);
+                crawler.Start();
                 Application.Run();
             }
         }

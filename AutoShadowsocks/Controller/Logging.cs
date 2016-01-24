@@ -48,15 +48,18 @@ namespace Shadowsocks.Controller
                 SocketException se = (SocketException)e;
                 if (se.SocketErrorCode == SocketError.ConnectionAborted)
                 {
+                    Console.WriteLine("SocketError.ConnectionAborted");
                     // closed by browser when sending
                     // normally happens when download is canceled or a tab is closed before page is loaded
                 }
                 else if (se.SocketErrorCode == SocketError.ConnectionReset)
                 {
+                    Console.WriteLine("SocketError.ConnectionReset");
                     // received rst
                 }
                 else if (se.SocketErrorCode == SocketError.NotConnected)
                 {
+                    Console.WriteLine("SocketError.NotConnected");
                     // close when not connected
                 }
                 else
