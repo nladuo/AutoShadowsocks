@@ -7,9 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using ZXing;
-using ZXing.Common;
-using ZXing.QrCode;
+using Shadowsocks.Nladuo;
 
 namespace Shadowsocks.View
 {
@@ -42,6 +40,7 @@ namespace Shadowsocks.View
         private MenuItem updateFromGFWListItem;
         private MenuItem editGFWUserRuleItem;
         private MenuItem editOnlinePACItem;
+        private MenuItem loadServersItem;
         private ConfigForm configForm;
 
         public MenuViewController(ShadowsocksController controller)
@@ -174,11 +173,17 @@ namespace Shadowsocks.View
                 this.AvailabilityStatistics = CreateMenuItem("Availability Statistics", new EventHandler(this.AvailabilityStatisticsItem_Click)),
                 this.ShareOverLANItem = CreateMenuItem("Allow Clients from LAN", new EventHandler(this.ShareOverLANItem_Click)),
                 new MenuItem("-"),
-                //CreateMenuItem("Show Logs...", new EventHandler(this.ShowLogItem_Click)),
+                this.loadServersItem = CreateMenuItem("网络获取免费SS账号", new EventHandler(loadServers)),
                 CreateMenuItem("About...", new EventHandler(this.AboutItem_Click)),
                 new MenuItem("-"),
                 CreateMenuItem("Quit", new EventHandler(this.Quit_Click))
             });
+        }
+
+        private void loadServers(object sender, EventArgs e)
+        {
+            var form = new LoadServersForm(controller);
+            form.ShowDialog();
         }
 
         private void controller_ConfigChanged(object sender, EventArgs e)
@@ -331,7 +336,7 @@ namespace Shadowsocks.View
 
         private void AboutItem_Click(object sender, EventArgs e)
         {
-            Process.Start("https://github.com/shadowsocks/shadowsocks-windows");
+            Process.Start("https://github.com/nladuo/AutoShadowsocks");
         }
 
         private void notifyIcon1_DoubleClick(object sender, MouseEventArgs e)

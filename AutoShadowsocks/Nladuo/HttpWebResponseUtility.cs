@@ -33,6 +33,17 @@ namespace Shadowsocks.Nladuo
             }
 
             HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
+            //如果是发送HTTPS请求  
+            if (url.StartsWith("https", StringComparison.OrdinalIgnoreCase))
+            {
+                ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(CheckValidationResult);
+                request = WebRequest.Create(url) as HttpWebRequest;
+                request.ProtocolVersion = HttpVersion.Version10;
+            }
+            else
+            {
+                request = WebRequest.Create(url) as HttpWebRequest;
+            }
             request.Method = "GET";
             request.UserAgent = DefaultUserAgent;
             request.ServicePoint.Expect100Continue = false;

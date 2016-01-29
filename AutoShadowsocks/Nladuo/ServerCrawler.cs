@@ -14,77 +14,65 @@ namespace Shadowsocks.Nladuo
     class ServerCrawler
     {
         public static readonly string CRAWLER_REMARKS = "从网络中获取的ss账号";
-        public static readonly string ishadowsocks_url = "http://www.ishadowsocks.com/";
-        private static readonly int interval = 10000; // 10 seconds
-        private Timer timer = null;
+        public static readonly string hishadowsocks_url = "http://www.hishadowsocks.com/";
+        public static readonly string ezlink_url = "https://www.ezlink.hk/free.php";
+        
+
         private ShadowsocksController controller;
-        private bool isStart;
+        private Configuration configuration;
+        public bool isChange { get; set; }
+
+        public bool isErrOcurred { get; set; }
 
         public List<Server> serverList { get; set; }
 
         public ServerCrawler(ShadowsocksController controller)
         {
             this.controller = controller;
-            this.isStart = false;
-            timer = new Timer();
-            timer.Interval = interval;
-            timer.Tick += updateServers;
+            configuration = controller.GetConfigurationCopy();
+            
+            this.isChange = false;
+            this.isErrOcurred = false;
+
             this.serverList = new List<Server>();
+            foreach (var server in configuration.configs)
+            {
+                if (server.remarks == CRAWLER_REMARKS)
+                {
+                    this.serverList.Add(server);
+                }
+            }
         }
 
-        private void updateServers(object sender, EventArgs e)
+        public void saveServers()
+        {
+            foreach (var server in this.serverList)
+            {
+                bool isSaved = false;
+                for (int i = 0; i < configuration.configs.Count; i++)
+                {
+                    if (server.server == configuration.configs[i].server) //爬到的server名称不可能相同
+                    {
+                        configuration.configs[i] = server;
+                        isSaved = true;
+                    }
+                }
+                if (!isSaved)
+                {
+                    configuration.configs.Add(server);
+                }
+            }
+            controller.SaveServers(configuration.configs, configuration.localPort);
+        }
+
+        
+
+        public void updateServers()
         {
             List<Server> servers = new List<Server>();
             
-            try
-            {
-                HttpWebResponse response = HttpWebResponseUtility.CreateGetHttpResponse(ishadowsocks_url, null, null, null);
-                Stream dataStream = response.GetResponseStream();
-                StreamReader reader = new StreamReader(dataStream, Encoding.GetEncoding("utf-8"));
-                string responseFromServer = reader.ReadToEnd();
-                dataStream.Close();
-                reader.Close();
-                response.Close();
-                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-                doc.LoadHtml(responseFromServer);
-                HtmlNode node = doc.DocumentNode;
-                HtmlNodeCollection datas = node.SelectNodes("//div[@class='col-lg-4 text-center']");
-                string resultText = "";
-                int count = 0;
-                foreach (var data in datas)
-                {
-                    if (count >= 3)
-                    {
-                        break;
-                    }
-                    count++;
-                    //MessageBox.Show(count + "" + data.InnerText);
-                    string[] strs = data.InnerText.Split('\n');
-                    Server server = new Server();
-                    server.remarks = CRAWLER_REMARKS;
-                    server.server = strs[1].Trim().Split(':')[1];
-                    server.server_port = int.Parse(strs[2].Trim().Split(':')[1]);
-                    server.method = strs[3].Trim().Split(':')[1];
-                    servers.Add(server);
-                        
-                    
-                }
-                if (!this.isServersEqual(servers, this.serverList))
-                {
-                    this.serverList = servers;
-                    MessageBox.Show("true");
-                }
-                else
-                {
-                    MessageBox.Show("false");
-                }
-                
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message + ex.StackTrace);
-                Console.WriteLine("出现错误:" + ex.Message);
-            }
+           
+            
         }
 
         private bool isServersEqual(List<Server> s1, List<Server> s2)
@@ -104,25 +92,82 @@ namespace Shadowsocks.Nladuo
         }
 
 
-        public void Stop()
+        private Server crawlhishadowsocks()
         {
-            if (this.isStart)
+            Server server = new Server();
+            server.remarks = CRAWLER_REMARKS;
+            try
             {
-                this.timer.Stop();
-                this.isStart = false;
+                HttpWebResponse response = HttpWebResponseUtility.CreateGetHttpResponse(hishadowsocks_url, null, null, null);
+                Stream dataStream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(dataStream, Encoding.GetEncoding("utf-8"));
+                string responseFromServer = reader.ReadToEnd();
+                dataStream.Close();
+                reader.Close();
+                response.Close();
+                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(responseFromServer);
+                HtmlNode node = doc.DocumentNode;
+                HtmlNodeCollection datas = node.SelectNodes("//div[@class='col-md-6']/p");
+                int count = 0;
+                foreach (var data in datas)
+                {
+                    string[] texts = data.InnerText.Split(':');
+                    switch (count)
+                    {
+                        case 1: server.server = texts[1]; break;
+                        case 2: server.server_port = int.Parse(texts[1]); break;
+                        case 3: server.password = texts[1]; break;
+                        case 4: server.method = texts[1]; break;
+                    }
+                    count++;
+                }
+                return server;
+
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
 
-        public void Start()
+        private Server crawlEzlink()
         {
-            if (!this.isStart)
+            Server server = new Server();
+            server.remarks = CRAWLER_REMARKS;
+            try
             {
-                timer.Start();
-                this.isStart = true;
+                HttpWebResponse response = HttpWebResponseUtility.CreateGetHttpResponse(ezlink_url, null, null, null);
+                Stream dataStream = response.GetResponseStream();
+                StreamReader reader = new StreamReader(dataStream, Encoding.GetEncoding("utf-8"));
+                string responseFromServer = reader.ReadToEnd();
+                dataStream.Close();
+                reader.Close();
+                response.Close();
+                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(responseFromServer);
+                HtmlNode node = doc.DocumentNode;
+                HtmlNodeCollection datas = node.SelectNodes("//div[@class='col-md-6']/p");
+                int count = 0;
+                foreach (var data in datas)
+                {
+                    string[] texts = data.InnerText.Split(':');
+                    switch (count)
+                    {
+                        case 1: server.server = texts[1]; break;
+                        case 2: server.server_port = int.Parse(texts[1]); break;
+                        case 3: server.password = texts[1]; break;
+                        case 4: server.method = texts[1]; break;
+                    }
+                    count++;
+                }
+                return server;
+
             }
-            //updateServers(null, null);
-            
-            
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

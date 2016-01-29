@@ -73,59 +73,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="3rd\zxing\BarcodeFormat.cs" />
-    <Compile Include="3rd\zxing\BaseLuminanceSource.cs" />
-    <Compile Include="3rd\zxing\Binarizer.cs" />
-    <Compile Include="3rd\zxing\BinaryBitmap.cs" />
-    <Compile Include="3rd\zxing\BitmapLuminanceSource.cs" />
-    <Compile Include="3rd\zxing\common\BitArray.cs" />
-    <Compile Include="3rd\zxing\common\BitMatrix.cs" />
-    <Compile Include="3rd\zxing\common\BitSource.cs" />
-    <Compile Include="3rd\zxing\common\DecoderResult.cs" />
-    <Compile Include="3rd\zxing\common\DefaultGridSampler.cs" />
-    <Compile Include="3rd\zxing\common\DetectorResult.cs" />
-    <Compile Include="3rd\zxing\common\detector\MathUtils.cs" />
-    <Compile Include="3rd\zxing\common\GlobalHistogramBinarizer.cs" />
-    <Compile Include="3rd\zxing\common\GridSampler.cs" />
-    <Compile Include="3rd\zxing\common\HybridBinarizer.cs" />
-    <Compile Include="3rd\zxing\common\PerspectiveTransform.cs" />
-    <Compile Include="3rd\zxing\common\reedsolomon\GenericGF.cs" />
-    <Compile Include="3rd\zxing\common\reedsolomon\GenericGFPoly.cs" />
-    <Compile Include="3rd\zxing\common\reedsolomon\ReedSolomonDecoder.cs" />
-    <Compile Include="3rd\zxing\common\reedsolomon\ReedSolomonEncoder.cs" />
-    <Compile Include="3rd\zxing\common\StringUtils.cs" />
-    <Compile Include="3rd\zxing\DecodeHintType.cs" />
-    <Compile Include="3rd\zxing\EncodeHintType.cs" />
-    <Compile Include="3rd\zxing\LuminanceSource.cs" />
-    <Compile Include="3rd\zxing\qrcode\decoder\BitMatrixParser.cs" />
-    <Compile Include="3rd\zxing\qrcode\decoder\DataBlock.cs" />
-    <Compile Include="3rd\zxing\qrcode\decoder\DataMask.cs" />
-    <Compile Include="3rd\zxing\qrcode\decoder\DecodedBitStreamParser.cs" />
-    <Compile Include="3rd\zxing\qrcode\decoder\Decoder.cs" />
-    <Compile Include="3rd\zxing\qrcode\decoder\ErrorCorrectionLevel.cs" />
-    <Compile Include="3rd\zxing\qrcode\decoder\FormatInformation.cs" />
-    <Compile Include="3rd\zxing\qrcode\decoder\Mode.cs" />
-    <Compile Include="3rd\zxing\qrcode\decoder\QRCodeDecoderMetaData.cs" />
-    <Compile Include="3rd\zxing\qrcode\decoder\Version.cs" />
-    <Compile Include="3rd\zxing\qrcode\detector\AlignmentPattern.cs" />
-    <Compile Include="3rd\zxing\qrcode\detector\AlignmentPatternFinder.cs" />
-    <Compile Include="3rd\zxing\qrcode\detector\Detector.cs" />
-    <Compile Include="3rd\zxing\qrcode\detector\FinderPattern.cs" />
-    <Compile Include="3rd\zxing\qrcode\detector\FinderPatternFinder.cs" />
-    <Compile Include="3rd\zxing\qrcode\detector\FinderPatternInfo.cs" />
-    <Compile Include="3rd\zxing\qrcode\encoder\BlockPair.cs" />
-    <Compile Include="3rd\zxing\qrcode\encoder\ByteMatrix.cs" />
-    <Compile Include="3rd\zxing\qrcode\encoder\Encoder.cs" />
-    <Compile Include="3rd\zxing\qrcode\encoder\MaskUtil.cs" />
-    <Compile Include="3rd\zxing\qrcode\encoder\MatrixUtil.cs" />
-    <Compile Include="3rd\zxing\qrcode\encoder\QRCode.cs" />
     <Compile Include="3rd\SimpleJson.cs" />
-    <Compile Include="3rd\zxing\qrcode\QRCodeReader.cs" />
-    <Compile Include="3rd\zxing\Result.cs" />
-    <Compile Include="3rd\zxing\ResultMetadataType.cs" />
-    <Compile Include="3rd\zxing\ResultPoint.cs" />
-    <Compile Include="3rd\zxing\ResultPointCallback.cs" />
-    <Compile Include="3rd\zxing\WriterException.cs" />
     <Compile Include="Controller\Service\AvailabilityStatistics.cs" />
     <Compile Include="Controller\Strategy\HighAvailabilityStrategy.cs" />
     <Compile Include="Controller\Strategy\SimplyChooseByStatisticsStrategy.cs" />
@@ -150,6 +98,12 @@
     <Compile Include="Controller\Service\PACServer.cs" />
     <Compile Include="Model\Server.cs" />
     <Compile Include="Model\Configuration.cs" />
+    <Compile Include="Nladuo\LoadServersForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Nladuo\LoadServersForm.Designer.cs">
+      <DependentUpon>LoadServersForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Nladuo\ServerCrawler.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -174,6 +128,9 @@
     <Compile Include="Controller\ShadowsocksController.cs" />
     <Compile Include="Controller\System\SystemProxy.cs" />
     <Compile Include="View\MenuViewController.cs" />
+    <EmbeddedResource Include="Nladuo\LoadServersForm.resx">
+      <DependentUpon>LoadServersForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\ConfigForm.resx">
       <DependentUpon>ConfigForm.cs</DependentUpon>
       <SubType>Designer</SubType>
