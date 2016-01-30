@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.IO;
 using HtmlAgilityPack;
+using System.Threading;
 
 namespace Shadowsocks.Nladuo
 {
@@ -20,9 +21,6 @@ namespace Shadowsocks.Nladuo
 
         private ShadowsocksController controller;
         private Configuration configuration;
-        public bool isChange { get; set; }
-
-        public bool isErrOcurred { get; set; }
 
         public List<Server> serverList { get; set; }
 
@@ -30,9 +28,6 @@ namespace Shadowsocks.Nladuo
         {
             this.controller = controller;
             configuration = controller.GetConfigurationCopy();
-            
-            this.isChange = false;
-            this.isErrOcurred = false;
 
             this.serverList = new List<Server>();
             foreach (var server in configuration.configs)
@@ -65,14 +60,41 @@ namespace Shadowsocks.Nladuo
             controller.SaveServers(configuration.configs, configuration.localPort);
         }
 
-        
+        public void asyncRequest()
+        {
+            Thread th = new Thread(new ThreadStart(updateServers));
+            th.Start();
+        }
 
         public void updateServers()
         {
             List<Server> servers = new List<Server>();
-            
-           
-            
+            Server server1 = crawlEzlink();
+            if (server1 != null)
+            {
+                servers.Add(server1);
+            }
+
+            Server server2 = crawlHiShadowsocks();
+            if (server2 != null)
+            {
+                servers.Add(server2);
+            }
+            if (servers.Count == 0)
+            {
+                MessageBox.Show("请求失败，尝试关闭代理后重试");
+            }
+            else if (isServersEqual(this.serverList, servers))
+            {
+                MessageBox.Show("已经是最新了，不需要更新");
+            }
+            else
+            {
+                this.serverList = servers;
+                this.saveServers();
+                MessageBox.Show("更新成功");
+            }
+
         }
 
         private bool isServersEqual(List<Server> s1, List<Server> s2)
@@ -83,16 +105,23 @@ namespace Shadowsocks.Nladuo
             }
             for (int i = 0; i < s1.Count; i++)
             {
-                if (s1[i].password != s2[i].password)
+                for (int j = 0; j < s2.Count; j++)
                 {
-                    return false;
+                    if ( (s1[i].server == s2[j].server) &&
+                        (s1[i].password != s2[j].password) )
+                    {
+                        return false;
+                    }
                 }
             }
             return true;
         }
 
-
-        private Server crawlhishadowsocks()
+        /// <summary>
+        /// 爬取http://www.hishadowsocks.com/的免费账号
+        /// </summary>
+        /// <returns></returns>
+        private Server crawlHiShadowsocks()
         {
             Server server = new Server();
             server.remarks = CRAWLER_REMARKS;
@@ -131,6 +160,10 @@ namespace Shadowsocks.Nladuo
             }
         }
 
+        /// <summary>
+        /// 爬取https://www.ezlink.hk/的免费账号
+        /// </summary>
+        /// <returns></returns>
         private Server crawlEzlink()
         {
             Server server = new Server();
@@ -147,22 +180,22 @@ namespace Shadowsocks.Nladuo
                 HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                 doc.LoadHtml(responseFromServer);
                 HtmlNode node = doc.DocumentNode;
-                HtmlNodeCollection datas = node.SelectNodes("//div[@class='col-md-6']/p");
+                HtmlNodeCollection datas = node.SelectNodes("//tr/td");
                 int count = 0;
                 foreach (var data in datas)
                 {
-                    string[] texts = data.InnerText.Split(':');
+
                     switch (count)
                     {
-                        case 1: server.server = texts[1]; break;
-                        case 2: server.server_port = int.Parse(texts[1]); break;
-                        case 3: server.password = texts[1]; break;
-                        case 4: server.method = texts[1]; break;
+                        case 13: server.server = data.InnerText; break;
+                        case 15: server.server_port = int.Parse(data.InnerText); break;
+                        case 17: server.password = data.InnerText; break;
+                        case 19: server.method = data.InnerText; break;
                     }
+                    
                     count++;
                 }
                 return server;
-
             }
             catch (Exception)
             {

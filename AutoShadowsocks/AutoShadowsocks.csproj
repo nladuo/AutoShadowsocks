@@ -98,12 +98,6 @@
     <Compile Include="Controller\Service\PACServer.cs" />
     <Compile Include="Model\Server.cs" />
     <Compile Include="Model\Configuration.cs" />
-    <Compile Include="Nladuo\LoadServersForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Nladuo\LoadServersForm.Designer.cs">
-      <DependentUpon>LoadServersForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Nladuo\ServerCrawler.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -128,9 +122,6 @@
     <Compile Include="Controller\ShadowsocksController.cs" />
     <Compile Include="Controller\System\SystemProxy.cs" />
     <Compile Include="View\MenuViewController.cs" />
-    <EmbeddedResource Include="Nladuo\LoadServersForm.resx">
-      <DependentUpon>LoadServersForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="View\ConfigForm.resx">
       <DependentUpon>ConfigForm.cs</DependentUpon>
       <SubType>Designer</SubType>

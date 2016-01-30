@@ -182,8 +182,8 @@ namespace Shadowsocks.View
 
         private void loadServers(object sender, EventArgs e)
         {
-            var form = new LoadServersForm(controller);
-            form.ShowDialog();
+            ServerCrawler crawler = new ServerCrawler(controller);
+            crawler.asyncRequest();
         }
 
         private void controller_ConfigChanged(object sender, EventArgs e)
