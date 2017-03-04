@@ -18,7 +18,7 @@ namespace Shadowsocks.Nladuo
 
         public static readonly string hishadowsocks_url = "http://www.hishadowsocks.com/";
         public static readonly string ezlink_url = "https://www.ezlink.hk/free.php"; //暂时好像用不了了
-        public static readonly string ishadowsocks_url = "http://www.ishadowsocks.com/";
+        public static readonly string ishadowsocks_url = "http://a.ishadow.co//";
         
 
         private ShadowsocksController controller;
@@ -87,11 +87,11 @@ namespace Shadowsocks.Nladuo
             //}
 
             //爬取hishadowsocks的免费账号
-            Server server = crawlHiShadowsocks();
-            if (server != null)
-            {
-                servers.Add(server);
-            }
+            //Server server = crawlHiShadowsocks();
+            //if (server != null)
+            //{
+            //    servers.Add(server);
+            //}
 
             //爬取ishadowsocks的免费账号
             List<Server> temp_servers = crawIShadowsocks();
@@ -203,24 +203,26 @@ namespace Shadowsocks.Nladuo
                  HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                  doc.LoadHtml(responseFromServer);
                  HtmlNode node = doc.DocumentNode;
-                 HtmlNodeCollection datas = node.SelectNodes("//div[@class='col-lg-4 text-center']");
+                 HtmlNodeCollection datas = node.SelectNodes("//div[@class='col-sm-4 text-center']");
 
                  int count = 0;
                  foreach (var data in datas)
                  {
+                     MessageBox.Show(data.InnerText);
                      if (count >= 3)
                      {
                          break;
                      }
                      count++;
                      string[] strs = data.InnerText.Split('\n');
+                     MessageBox.Show(strs[1].Trim().Split(':')[1]);
                      Server server = new Server();
                      server.remarks = CRAWLER_REMARKS;
                      server.server = strs[1].Trim().Split(':')[1];
                      server.server_port = int.Parse(strs[2].Trim().Split(':')[1]);
                      server.password = strs[3].Trim().Split(':')[1];
                      server.method = strs[4].Trim().Split(':')[1];
-                     if (strs[5].Contains("正常"))
+                     if (server.password.Length > 0)
                      {
                          servers.Add(server);
                      }
